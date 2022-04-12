@@ -1,0 +1,160 @@
+<h1 class="page-header">Gateways</h1>
+
+<p *ngIf="!gateways"><em>Loading...</em></p>
+
+<div *ngIf="gateways">
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ gatewayDlgTitle }}</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="gatewayForm">
+        <div class="form-group mb-3 has-validation">
+          <label for="gSerialNumber" class="form-label">Serial Number</label>
+          <input class="form-control" type="text" id="gSerialNumber" name="gSerialNumber" formControlName="serialNumber"
+                 [ngClass]="{ 'is-invalid' : isFieldInvalid(gatewayForm, 'serialNumber') }" />
+          <app-field-validation [group]="gatewayForm" field="serialNumber"></app-field-validation>
+        </div>
+        <div class="form-group mb-3">
+          <label for="gName" class="form-label">Name</label>
+          <input class="form-control" type="text" id="gName" name="gName" formControlName="name"
+                 [ngClass]="{ 'is-invalid' : isFieldInvalid(gatewayForm, 'name') }" />
+          <app-field-validation [group]="gatewayForm" field="name"></app-field-validation>
+        </div>
+        <div class="form-group mb-3">
+          <label for="gIPAddress" class="form-label">IP Address</label>
+          <input class="form-control" type="text" id="gIPAddress" name="gIPAddress" formControlName="ipAddress"
+                 [ngClass]="{ 'is-invalid' : isFieldInvalid(gatewayForm, 'ipAddress') }" />
+          <app-field-validation [group]="gatewayForm" field="ipAddress" patternMessage="Invalid IP address"></app-field-validation>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="validateGateway(modal)">{{ gatewayDlgOk }}</button>
+      <button type="button" class="btn btn-dark" (click)="close(modal)">Cancel</button>
+    </div>
+
+  </ng-template>
+
+  <div class="mb-3">
+    <button class="btn btn-primary" (click)="newGateway(content)">New Gateway</button>
+  </div>
+
+  <table class='table table-bordered table-striped' aria-labelledby="tableLabel">
+    <thead>
+      <tr>
+        <th style="width: 80px"></th>
+        <th style="width: 60px;"></th>
+        <th>Serial Number</th>
+        <th>Name</th>
+        <th>IP Address</th>
+        <th>Peripherals</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let g of gateways">
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="removeGateway(g)">Remove</button>
+        </td>
+        <td>
+          <button class="btn btn-primary btn-sm" (click)="editGateway(content, g)">Edit</button>
+        </td>
+        <td>{{ g.serialNumber }}</td>
+        <td>{{ g.name }}</td>
+        <td>{{ g.ip }}</td>
+        <td>
+          <div style="display: flex; justify-content:space-between">
+            {{ g.peripherals.length }}
+            <div class="pull-right">
+              <button class="btn btn-primary btn-sm" (click)="currentGateway(g)">Details</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="gateway" style="margin-top: 40px">
+
+    <h2>{{ gateway.name }} peripherals</h2>
+
+    <ng-template #content_peripheral let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ peripheralDlgTitle }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="peripheralForm">
+          <div class="form-group mb-3 has-validation">
+            <label for="gId" class="form-label">ID</label>
+            <input class="form-control" type="text" id="gId" name="gId" formControlName="id"
+                   [ngClass]="{ 'is-invalid' : isFieldInvalid(peripheralForm, 'id') }" />
+            <app-field-validation [group]="peripheralForm" field="id" patternMessage="Must be a number"></app-field-validation>
+          </div>
+          <div class="form-group mb-3 has-validation">
+            <label for="gVendor" class="form-label">Vendor</label>
+            <input class="form-control" type="text" id="gVendor" name="gVendor" formControlName="vendor"
+                   [ngClass]="{ 'is-invalid' : isFieldInvalid(peripheralForm, 'vendor') }"/>
+            <app-field-validation [group]="peripheralForm" field="vendor"></app-field-validation>
+          </div>
+          <div class="form-group mb-3 has-validation">
+            <label for="gCreationDate" class="form-label">Creation date</label>
+            <div class="input-group">
+              <input class="form-control" type="text" id="gCreationDate" name="gCreationDate" formControlName="creationDate" placeholder="dd/mm/yyyy"
+                     [ngClass]="{ 'is-invalid' : isFieldInvalid(peripheralForm, 'creationDate') }"  ngbDatepicker #d="ngbDatepicker"/>
+              <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">&nabla;</button>
+            </div>
+            <app-field-validation [group]="peripheralForm" field="creationDate"></app-field-validation>
+          </div>
+          <div class="form-group mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="gIsOnline" name="gIsOnline" formControlName="isOnline">
+              <label class="form-check-label" for="gIsOnline">Is Online</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="validatePeripheral(modal)">{{ peripheralDlgOk }}</button>
+        <button type="button" class="btn btn-dark" (click)="close(modal)">Cancel</button>
+      </div>
+
+    </ng-template>
+
+    <div class="mt-3 mb-3">
+      <button class="btn btn-primary" (click)="newPeripheral(content_peripheral)">New Peripheral</button>
+    </div>
+
+    <table class='table table-bordered table-striped' aria-labelledby="tableLabel">
+      <thead>
+        <tr>
+          <th style="width: 80px"></th>
+          <th style="width: 60px;"></th>
+          <th>Id</th>
+          <th>Vendor</th>
+          <th>Creation time</th>
+          <th>Is Online</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of gateway.peripherals">
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="removePeripheral(p)">Remove</button>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="editPeripheral(content_peripheral, p)">Edit</button>
+          </td>
+          <td>{{ p.id }}</td>
+          <td>{{ p.vendor }}</td>
+          <td>{{ p.creationDate}}</td>
+          <td>{{ p.isOnline ? "Yes" : "No" }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+
+</div>

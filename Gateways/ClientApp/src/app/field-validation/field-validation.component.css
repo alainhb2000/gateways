@@ -1,0 +1,9 @@
+.invalid-field {
+  color: crimson;
+  font-size: 0.7em;
+  opacity: 0;
+}
+
+  .invalid-field.show {
+    opacity: 1;
+  }

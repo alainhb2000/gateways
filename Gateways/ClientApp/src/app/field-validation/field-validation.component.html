@@ -1,0 +1,3 @@
+<ng-container *ngFor="let e of getFieldErrors()">
+  <div class="invalid-field" [class]="isFieldInvalid() ? 'show' : ''">{{ parseError(e) }}</div>
+</ng-container>
